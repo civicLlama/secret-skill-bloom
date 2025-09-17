@@ -1,3 +1,5 @@
+import { ethers } from 'ethers';
+
 // FHE utility functions for Secret Skill Bloom
 // Note: In a real implementation, these would use actual FHE libraries
 // For now, we'll use placeholder functions that simulate FHE operations
@@ -119,11 +121,45 @@ export class FHEUtils {
   }
 }
 
+// Contract ABI for SecretSkillBloom
+const SECRET_SKILL_BLOOM_ABI = [
+  "function registerPlayer() external",
+  "function getPlayerSkillPoints(address playerAddress) external view returns (uint32)",
+  "function getPlayerLevel(address playerAddress) external view returns (uint32)",
+  "function isSkillUnlocked(address playerAddress, uint256 skillIndex) external view returns (bool)",
+  "function unlockSkill(uint256 skillIndex, bytes encryptedCurrentSkillPoints, bytes inputProof) external",
+  "function skills(uint256 index) external view returns (uint32 cost, uint32 requiredLevel)",
+  "function skillsLength() external view returns (uint256)",
+  "event PlayerRegistered(address indexed playerAddress, uint32 initialSkillPoints)",
+  "event SkillUnlocked(address indexed playerAddress, uint256 indexed skillIndex, uint32 newSkillPoints)"
+];
+
 // Contract interaction utilities
 export class ContractUtils {
+  static async getContract(signer: any, contractAddress: string) {
+    try {
+      const contract = new ethers.Contract(contractAddress, SECRET_SKILL_BLOOM_ABI, signer);
+      return contract;
+    } catch (error) {
+      console.error('Error creating contract instance:', error);
+      throw error;
+    }
+  }
+
+  static async registerPlayer(contract: any, playerAddress: string) {
+    try {
+      const tx = await contract.registerPlayer();
+      await tx.wait();
+      return tx;
+    } catch (error) {
+      console.error('Error registering player:', error);
+      throw error;
+    }
+  }
+
   static async joinGame(contract: any, signer: any) {
     try {
-      const tx = await contract.connect(signer).joinGame();
+      const tx = await contract.connect(signer).registerPlayer();
       await tx.wait();
       return tx;
     } catch (error) {
@@ -193,17 +229,17 @@ export class ContractUtils {
   static async getPlayerSkillPoints(contract: any, playerAddress: string): Promise<number> {
     try {
       const result = await contract.getPlayerSkillPoints(playerAddress);
-      return result;
+      return Number(result);
     } catch (error) {
       console.error('Error getting player skill points:', error);
       throw error;
     }
   }
 
-  static async getPlayerLevel(contract: any, playerAddress: string, branch: string): Promise<number> {
+  static async getPlayerLevel(contract: any, playerAddress: string): Promise<number> {
     try {
-      const result = await contract.getPlayerLevel(playerAddress, branch);
-      return result;
+      const result = await contract.getPlayerLevel(playerAddress);
+      return Number(result);
     } catch (error) {
       console.error('Error getting player level:', error);
       throw error;
@@ -216,6 +252,29 @@ export class ContractUtils {
       return result;
     } catch (error) {
       console.error('Error checking skill unlock status:', error);
+      throw error;
+    }
+  }
+
+  static async getSkillsLength(contract: any): Promise<number> {
+    try {
+      const result = await contract.skillsLength();
+      return Number(result);
+    } catch (error) {
+      console.error('Error getting skills length:', error);
+      throw error;
+    }
+  }
+
+  static async getSkillInfo(contract: any, skillIndex: number): Promise<{ cost: number; requiredLevel: number }> {
+    try {
+      const result = await contract.skills(skillIndex);
+      return {
+        cost: Number(result.cost),
+        requiredLevel: Number(result.requiredLevel)
+      };
+    } catch (error) {
+      console.error('Error getting skill info:', error);
       throw error;
     }
   }

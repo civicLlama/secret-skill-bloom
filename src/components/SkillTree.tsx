@@ -228,7 +228,15 @@ export const SkillTree = ({ contract }: SkillTreeProps) => {
     setIsLoading(true);
     try {
       const skillIndex = skillData.findIndex(s => s.id === skillId);
-      await ContractUtils.unlockSkill(contract, address, skillIndex, skillPoints);
+      
+      // For now, we'll use a simplified approach without FHE encryption
+      // In production, this would use encrypted skill points
+      const tx = await contract.unlockSkill(
+        skillIndex, 
+        "0x0000000000000000000000000000000000000000000000000000000000000000", // Placeholder encrypted data
+        "0x0000000000000000000000000000000000000000000000000000000000000000"  // Placeholder proof
+      );
+      await tx.wait();
       
       setUnlockedSkills(prev => new Set([...prev, skillId]));
       setSkillPoints(prev => prev - skill.cost);

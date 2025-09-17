@@ -46,7 +46,7 @@ export const WalletConnect = ({ onConnect, contract }: WalletConnectProps) => {
 
     setIsJoining(true);
     try {
-      await ContractUtils.joinGame(contract, address);
+      await ContractUtils.registerPlayer(contract, address);
       setIsJoined(true);
       setSkillPoints(5); // Starting skill points
       toast.success("Successfully joined the game!");

@@ -5,23 +5,33 @@ import skillTreeLogo from "@/assets/skill-tree-logo.png";
 import { useState, useEffect } from "react";
 import { useAccount } from 'wagmi';
 import { ethers } from 'ethers';
+import { ContractUtils } from "@/lib/fhe-utils";
 
 const Index = () => {
   const { address, isConnected } = useAccount();
   const [contract, setContract] = useState<any>(null);
 
   useEffect(() => {
-    if (isConnected && address) {
-      // Initialize contract instance
-      // This would be replaced with actual contract address after deployment
-      const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
-      if (contractAddress) {
-        // Initialize contract here
-        // const provider = new ethers.BrowserProvider(window.ethereum);
-        // const contractInstance = new ethers.Contract(contractAddress, abi, provider);
-        // setContract(contractInstance);
+    const initializeContract = async () => {
+      if (isConnected && address && window.ethereum) {
+        try {
+          const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
+          if (contractAddress) {
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const contractInstance = await ContractUtils.getContract(signer, contractAddress);
+            setContract(contractInstance);
+            console.log("Contract initialized:", contractAddress);
+          } else {
+            console.log("No contract address configured");
+          }
+        } catch (error) {
+          console.error("Error initializing contract:", error);
+        }
       }
-    }
+    };
+
+    initializeContract();
   }, [isConnected, address]);
 
   return (
