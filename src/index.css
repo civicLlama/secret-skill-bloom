@@ -1,0 +1,206 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* RPG Dark Fantasy Design System - All colors MUST be HSL */
+
+@layer base {
+  :root {
+    /* Dark RPG Background */
+    --background: 240 10% 8%;
+    --foreground: 280 15% 90%;
+
+    /* Card and Surface Colors */
+    --card: 240 15% 12%;
+    --card-foreground: 280 10% 85%;
+
+    --popover: 240 20% 10%;
+    --popover-foreground: 280 15% 90%;
+
+    /* Magical Primary Colors */
+    --primary: 270 60% 55%;
+    --primary-foreground: 280 5% 95%;
+    --primary-glow: 270 80% 65%;
+
+    /* Mystical Secondary */
+    --secondary: 240 25% 18%;
+    --secondary-foreground: 280 15% 85%;
+
+    /* Muted Dark Tones */
+    --muted: 240 15% 15%;
+    --muted-foreground: 260 8% 60%;
+
+    /* Magical Accent */
+    --accent: 280 70% 50%;
+    --accent-foreground: 280 5% 95%;
+
+    /* Skill Tree Specific Colors */
+    --skill-locked: 240 20% 25%;
+    --skill-unlocked: 45 90% 65%;
+    --skill-available: 270 60% 55%;
+    --skill-encrypted: 0 70% 50%;
+
+    /* RPG UI Colors */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 20% 25%;
+    --input: 240 25% 18%;
+    --ring: 270 60% 55%;
+
+    /* Magical Gradients */
+    --gradient-mystical: linear-gradient(135deg, hsl(270 60% 55%), hsl(280 70% 50%));
+    --gradient-skill: linear-gradient(135deg, hsl(270 40% 35%), hsl(240 30% 20%));
+    --gradient-unlock: linear-gradient(135deg, hsl(45 90% 65%), hsl(35 85% 55%));
+    --gradient-background: radial-gradient(ellipse at center, hsl(270 30% 15%), hsl(240 20% 8%));
+
+    /* Glowing Effects */
+    --glow-mystical: 0 0 20px hsl(270 60% 55% / 0.5);
+    --glow-unlock: 0 0 25px hsl(45 90% 65% / 0.6);
+    --glow-encrypted: 0 0 15px hsl(0 70% 50% / 0.4);
+
+    /* Animations */
+    --transition-mystical: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --pulse-duration: 2s;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background: var(--gradient-background);
+    min-height: 100vh;
+  }
+}
+
+/* RPG Skill Tree Animations and Effects */
+@layer components {
+  .skill-node {
+    @apply relative rounded-full border-2 transition-all duration-300 cursor-pointer;
+    transition: var(--transition-mystical);
+  }
+
+  .skill-node-locked {
+    @apply bg-muted border-border opacity-60;
+  }
+
+  .skill-node-available {
+    @apply bg-primary border-primary;
+    background: var(--gradient-mystical);
+    box-shadow: var(--glow-mystical);
+  }
+
+  .skill-node-unlocked {
+    background: var(--gradient-unlock);
+    border-color: hsl(var(--skill-unlocked));
+    box-shadow: var(--glow-unlock);
+  }
+
+  .skill-node-encrypted {
+    border-color: hsl(var(--skill-encrypted));
+    box-shadow: var(--glow-encrypted);
+    animation: pulse-encrypt var(--pulse-duration) infinite;
+  }
+
+  .skill-connection {
+    @apply absolute bg-border;
+    height: 2px;
+    z-index: 10;
+  }
+
+  .skill-connection-active {
+    background: var(--gradient-mystical);
+    box-shadow: var(--glow-mystical);
+    height: 3px;
+  }
+
+  .wallet-connect {
+    background: var(--gradient-mystical);
+    @apply border-primary text-primary-foreground;
+    box-shadow: var(--glow-mystical);
+    transition: var(--transition-mystical);
+  }
+
+  .wallet-connect:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--glow-mystical), 0 10px 25px hsl(270 60% 55% / 0.3);
+  }
+}
+
+@keyframes pulse-encrypt {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes mystical-glow {
+  0%, 100% {
+    box-shadow: var(--glow-mystical);
+  }
+  50% {
+    box-shadow: 0 0 30px hsl(270 60% 55% / 0.8);
+  }
+}
